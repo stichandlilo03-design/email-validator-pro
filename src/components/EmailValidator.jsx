@@ -7,6 +7,9 @@ const EmailValidator = () => {
   const [validating, setValidating] = useState(false);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [currentEmail, setCurrentEmail] = useState('');
+  const [totalToValidate, setTotalToValidate] = useState(0);
 
   // Email validation functions
   const validateEmailSyntax = (email) => {
@@ -62,20 +65,36 @@ const EmailValidator = () => {
 
   const handleValidate = async () => {
     setValidating(true);
+    setProgress(0);
+    setEmails([]);
     
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     const extractedEmails = inputText.match(emailRegex) || [];
     const uniqueEmails = [...new Set(extractedEmails)];
+    
+    setTotalToValidate(uniqueEmails.length);
 
     const validatedEmails = [];
-    for (const email of uniqueEmails) {
+    for (let i = 0; i < uniqueEmails.length; i++) {
+      const email = uniqueEmails[i];
+      setCurrentEmail(email);
+      
       const result = await validateEmail(email);
       validatedEmails.push(result);
-      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Update progress
+      const progressPercent = Math.round(((i + 1) / uniqueEmails.length) * 100);
+      setProgress(progressPercent);
+      
+      // Update emails in real-time
+      setEmails([...validatedEmails]);
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    setEmails(validatedEmails);
     setValidating(false);
+    setCurrentEmail('');
+    setProgress(0);
   };
 
   const handleFileUpload = (e) => {
@@ -288,6 +307,12 @@ const EmailValidator = () => {
 
   return (
     <div style={styles.container}>
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
       <div style={styles.maxWidth}>
         <div style={styles.card}>
           <div style={styles.header}>
@@ -332,17 +357,57 @@ const EmailValidator = () => {
                   disabled={!inputText.trim() || validating}
                   style={{...styles.button, ...styles.buttonPrimary, opacity: (!inputText.trim() || validating) ? 0.5 : 1}}
                 >
-                  {validating ? 'Validating...' : 'Validate Emails'}
+                  {validating ? `Validating ${progress}%` : 'Validate Emails'}
                 </button>
 
                 <button
-                  onClick={() => { setInputText(''); setEmails([]) }}
+                  onClick={() => { setInputText(''); setEmails([]); setProgress(0); setCurrentEmail(''); }}
                   style={{...styles.button, ...styles.buttonDanger}}
+                  disabled={validating}
                 >
                   <Trash2 size={20} />
                   Clear
                 </button>
               </div>
+
+              {validating && (
+                <div style={{marginTop: '24px', background: '#f7fafc', borderRadius: '12px', padding: '20px', border: '2px solid #e2e8f0'}}>
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px'}}>
+                    <div style={{fontSize: '14px', fontWeight: '600', color: '#4a5568'}}>
+                      Validating Emails...
+                    </div>
+                    <div style={{fontSize: '20px', fontWeight: 'bold', color: '#667eea'}}>
+                      {progress}%
+                    </div>
+                  </div>
+                  
+                  <div style={{width: '100%', height: '12px', background: '#e2e8f0', borderRadius: '100px', overflow: 'hidden', marginBottom: '12px'}}>
+                    <div style={{
+                      width: `${progress}%`,
+                      height: '100%',
+                      background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                      borderRadius: '100px',
+                      transition: 'width 0.3s ease',
+                      boxShadow: '0 0 10px rgba(102, 126, 234, 0.5)'
+                    }} />
+                  </div>
+                  
+                  <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#718096'}}>
+                    <div style={{
+                      width: '6px',
+                      height: '6px',
+                      background: '#667eea',
+                      borderRadius: '50%',
+                      animation: 'pulse 1s infinite'
+                    }} />
+                    <span>Currently validating: <strong style={{color: '#4a5568'}}>{currentEmail}</strong></span>
+                  </div>
+                  
+                  <div style={{fontSize: '12px', color: '#a0aec0', marginTop: '8px'}}>
+                    Processed {emails.length} of {totalToValidate} emails
+                  </div>
+                </div>
+              )}
             </div>
 
             {emails.length > 0 && (
