@@ -27,7 +27,6 @@ const EmailValidator = () => {
   };
 
   const validateDomain = async (email) => {
-    // Simulated DNS check - in real app would use actual DNS lookup
     const domain = email.split('@')[1];
     const commonDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'aol.com'];
     return commonDomains.includes(domain?.toLowerCase()) || Math.random() > 0.1;
@@ -64,19 +63,14 @@ const EmailValidator = () => {
   const handleValidate = async () => {
     setValidating(true);
     
-    // Extract emails from input
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     const extractedEmails = inputText.match(emailRegex) || [];
-    
-    // Remove duplicates
     const uniqueEmails = [...new Set(extractedEmails)];
 
-    // Validate each email
     const validatedEmails = [];
     for (const email of uniqueEmails) {
       const result = await validateEmail(email);
       validatedEmails.push(result);
-      // Small delay to simulate real validation
       await new Promise(resolve => setTimeout(resolve, 50));
     }
 
@@ -136,69 +130,214 @@ const EmailValidator = () => {
 
   const filteredEmails = getFilteredEmails();
 
+  const styles = {
+    container: {
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      padding: '24px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    },
+    maxWidth: {
+      maxWidth: '1400px',
+      margin: '0 auto'
+    },
+    card: {
+      background: 'white',
+      borderRadius: '16px',
+      boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+      padding: '32px',
+      marginBottom: '24px'
+    },
+    header: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      flexWrap: 'wrap',
+      gap: '16px'
+    },
+    title: {
+      fontSize: '32px',
+      fontWeight: 'bold',
+      color: '#1a202c',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      margin: 0
+    },
+    subtitle: {
+      color: '#718096',
+      marginTop: '8px'
+    },
+    statBox: {
+      textAlign: 'right'
+    },
+    statLabel: {
+      fontSize: '14px',
+      color: '#718096'
+    },
+    statValue: {
+      fontSize: '36px',
+      fontWeight: 'bold',
+      color: '#667eea'
+    },
+    grid: {
+      display: 'grid',
+      gridTemplateColumns: '1fr',
+      gap: '24px'
+    },
+    gridLg: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+      gap: '24px'
+    },
+    textarea: {
+      width: '100%',
+      height: '200px',
+      padding: '16px',
+      border: '2px solid #e2e8f0',
+      borderRadius: '12px',
+      fontSize: '14px',
+      fontFamily: 'monospace',
+      resize: 'vertical',
+      outline: 'none'
+    },
+    buttonGroup: {
+      display: 'flex',
+      gap: '12px',
+      flexWrap: 'wrap'
+    },
+    button: {
+      flex: 1,
+      minWidth: '140px',
+      padding: '12px 24px',
+      borderRadius: '12px',
+      border: 'none',
+      fontSize: '14px',
+      fontWeight: '600',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      transition: 'all 0.2s'
+    },
+    buttonPrimary: {
+      background: '#667eea',
+      color: 'white'
+    },
+    buttonSecondary: {
+      background: '#f7fafc',
+      color: '#4a5568',
+      border: '2px solid #e2e8f0'
+    },
+    buttonDanger: {
+      background: '#fee',
+      color: '#c53030'
+    },
+    buttonSuccess: {
+      background: '#48bb78',
+      color: 'white'
+    },
+    input: {
+      flex: 1,
+      padding: '12px 16px',
+      border: '2px solid #e2e8f0',
+      borderRadius: '12px',
+      fontSize: '14px',
+      outline: 'none'
+    },
+    select: {
+      padding: '12px 16px',
+      border: '2px solid #e2e8f0',
+      borderRadius: '12px',
+      fontSize: '14px',
+      outline: 'none',
+      background: 'white',
+      cursor: 'pointer'
+    },
+    emailCard: {
+      border: '2px solid #e2e8f0',
+      borderRadius: '12px',
+      padding: '16px',
+      marginBottom: '12px',
+      transition: 'all 0.2s'
+    },
+    resultsList: {
+      maxHeight: '500px',
+      overflowY: 'auto',
+      padding: '8px'
+    },
+    statCard: {
+      borderRadius: '12px',
+      padding: '20px',
+      border: '2px solid'
+    },
+    validCard: {
+      background: '#f0fdf4',
+      borderColor: '#86efac'
+    },
+    riskyCard: {
+      background: '#fefce8',
+      borderColor: '#fde047'
+    },
+    invalidCard: {
+      background: '#fef2f2',
+      borderColor: '#fca5a5'
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto p-6 max-w-7xl">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between">
+    <div style={styles.container}>
+      <div style={styles.maxWidth}>
+        <div style={styles.card}>
+          <div style={styles.header}>
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <Mail className="text-blue-600" size={32} />
+              <h1 style={styles.title}>
+                <Mail color="#667eea" size={40} />
                 Email Validator Pro
               </h1>
-              <p className="text-gray-600 mt-1">Advanced email validation for Office 365</p>
+              <p style={styles.subtitle}>Advanced email validation for Office 365</p>
             </div>
-            <div className="text-right">
-              <div className="text-sm text-gray-500">Total Validated</div>
-              <div className="text-3xl font-bold text-blue-600">{stats.total}</div>
+            <div style={styles.statBox}>
+              <div style={styles.statLabel}>Total Validated</div>
+              <div style={styles.statValue}>{stats.total}</div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Input Section */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Input Emails</h2>
+        <div style={styles.gridLg}>
+          <div style={{gridColumn: 'span 2'}}>
+            <div style={styles.card}>
+              <h2 style={{fontSize: '24px', marginBottom: '16px', fontWeight: '600'}}>Input Emails</h2>
               
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Paste emails or upload file (supports TXT, CSV)
-                </label>
-                <textarea
-                  className="w-full h-48 p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Paste emails here... (one per line or separated by commas, spaces, or extract from text)"
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                />
-              </div>
+              <label style={{display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px', color: '#4a5568'}}>
+                Paste emails or upload file (TXT, CSV)
+              </label>
+              <textarea
+                style={styles.textarea}
+                placeholder="Paste emails here... (one per line or separated by commas)"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+              />
 
-              <div className="flex gap-3">
-                <label className="flex-1 cursor-pointer">
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept=".txt,.csv"
-                    onChange={handleFileUpload}
-                  />
-                  <div className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition">
-                    <Upload size={20} />
-                    Upload File
-                  </div>
+              <div style={{...styles.buttonGroup, marginTop: '16px'}}>
+                <label style={{...styles.button, ...styles.buttonSecondary, cursor: 'pointer'}}>
+                  <input type="file" style={{display: 'none'}} accept=".txt,.csv" onChange={handleFileUpload} />
+                  <Upload size={20} />
+                  Upload File
                 </label>
                 
                 <button
                   onClick={handleValidate}
                   disabled={!inputText.trim() || validating}
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition font-medium"
+                  style={{...styles.button, ...styles.buttonPrimary, opacity: (!inputText.trim() || validating) ? 0.5 : 1}}
                 >
                   {validating ? 'Validating...' : 'Validate Emails'}
                 </button>
 
                 <button
                   onClick={() => { setInputText(''); setEmails([]) }}
-                  className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg transition"
+                  style={{...styles.button, ...styles.buttonDanger}}
                 >
                   <Trash2 size={20} />
                   Clear
@@ -206,47 +345,35 @@ const EmailValidator = () => {
               </div>
             </div>
 
-            {/* Results Section */}
             {emails.length > 0 && (
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-800">Validation Results</h2>
-                  
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => exportResults('csv')}
-                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition text-sm"
-                    >
+              <div style={{...styles.card, marginTop: '24px'}}>
+                <div style={styles.header}>
+                  <h2 style={{fontSize: '24px', fontWeight: '600', margin: 0}}>Validation Results</h2>
+                  <div style={styles.buttonGroup}>
+                    <button onClick={() => exportResults('csv')} style={{...styles.button, ...styles.buttonSuccess}}>
                       <Download size={16} />
                       Export CSV
                     </button>
-                    <button
-                      onClick={() => exportResults('valid-only')}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm"
-                    >
+                    <button onClick={() => exportResults('valid-only')} style={{...styles.button, ...styles.buttonPrimary}}>
                       <Download size={16} />
                       Valid Only
                     </button>
                   </div>
                 </div>
 
-                <div className="flex gap-3 mb-4">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <div style={{...styles.buttonGroup, marginTop: '16px'}}>
+                  <div style={{position: 'relative', flex: 1}}>
+                    <Search style={{position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#cbd5e0'}} size={20} />
                     <input
                       type="text"
                       placeholder="Search emails..."
-                      className="w-full pl-10 pr-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      style={{...styles.input, paddingLeft: '44px'}}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                   
-                  <select
-                    className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                  >
+                  <select style={styles.select} value={filter} onChange={(e) => setFilter(e.target.value)}>
                     <option value="all">All ({stats.total})</option>
                     <option value="valid">Valid ({stats.valid})</option>
                     <option value="risky">Risky ({stats.risky})</option>
@@ -254,38 +381,39 @@ const EmailValidator = () => {
                   </select>
                 </div>
 
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div style={styles.resultsList}>
                   {filteredEmails.map((item, idx) => (
-                    <div key={idx} className="border-2 border-gray-200 rounded-lg p-4 hover:shadow-md transition">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3 flex-1">
-                          {item.status === 'valid' && <CheckCircle className="text-green-600 flex-shrink-0" size={24} />}
-                          {item.status === 'risky' && <AlertTriangle className="text-yellow-600 flex-shrink-0" size={24} />}
-                          {item.status === 'invalid' && <XCircle className="text-red-600 flex-shrink-0" size={24} />}
+                    <div key={idx} style={{...styles.emailCard, ':hover': {boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}}>
+                      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px', flex: 1}}>
+                          {item.status === 'valid' && <CheckCircle color="#48bb78" size={28} />}
+                          {item.status === 'risky' && <AlertTriangle color="#ecc94b" size={28} />}
+                          {item.status === 'invalid' && <XCircle color="#f56565" size={28} />}
                           
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium text-gray-800 truncate">{item.email}</div>
-                            <div className="text-sm text-gray-500 flex gap-3 mt-1">
-                              <span className={item.checks.syntax ? 'text-green-600' : 'text-red-600'}>
+                          <div style={{flex: 1}}>
+                            <div style={{fontWeight: '600', fontSize: '15px', color: '#2d3748'}}>{item.email}</div>
+                            <div style={{fontSize: '13px', color: '#718096', marginTop: '4px', display: 'flex', gap: '12px'}}>
+                              <span style={{color: item.checks.syntax ? '#48bb78' : '#f56565'}}>
                                 Syntax: {item.checks.syntax ? '✓' : '✗'}
                               </span>
-                              <span className={item.checks.domain ? 'text-green-600' : 'text-red-600'}>
+                              <span style={{color: item.checks.domain ? '#48bb78' : '#f56565'}}>
                                 Domain: {item.checks.domain ? '✓' : '✗'}
                               </span>
-                              {item.checks.disposable && <span className="text-orange-600">Disposable</span>}
-                              {item.checks.roleBased && <span className="text-blue-600">Role-based</span>}
+                              {item.checks.disposable && <span style={{color: '#ed8936'}}>Disposable</span>}
+                              {item.checks.roleBased && <span style={{color: '#4299e1'}}>Role-based</span>}
                             </div>
                           </div>
                         </div>
                         
-                        <div className="text-right ml-4">
-                          <div className={`text-2xl font-bold ${
-                            item.status === 'valid' ? 'text-green-600' : 
-                            item.status === 'risky' ? 'text-yellow-600' : 'text-red-600'
-                          }`}>
+                        <div style={{textAlign: 'right'}}>
+                          <div style={{
+                            fontSize: '28px',
+                            fontWeight: 'bold',
+                            color: item.status === 'valid' ? '#48bb78' : item.status === 'risky' ? '#ecc94b' : '#f56565'
+                          }}>
                             {item.score}
                           </div>
-                          <div className="text-xs text-gray-500">Score</div>
+                          <div style={{fontSize: '12px', color: '#a0aec0'}}>Score</div>
                         </div>
                       </div>
                     </div>
@@ -295,55 +423,54 @@ const EmailValidator = () => {
             )}
           </div>
 
-          {/* Stats Sidebar */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
+          <div>
+            <div style={styles.card}>
+              <h2 style={{fontSize: '20px', fontWeight: '600', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
                 <BarChart3 size={24} />
                 Statistics
               </h2>
               
-              <div className="space-y-4">
-                <div className="border-2 border-green-200 bg-green-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
+              <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                <div style={{...styles.statCard, ...styles.validCard}}>
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <div>
-                      <div className="text-sm text-green-700 font-medium">Valid</div>
-                      <div className="text-2xl font-bold text-green-600">{stats.valid}</div>
+                      <div style={{fontSize: '14px', color: '#166534', fontWeight: '600'}}>Valid</div>
+                      <div style={{fontSize: '32px', fontWeight: 'bold', color: '#22c55e'}}>{stats.valid}</div>
                     </div>
-                    <CheckCircle className="text-green-600" size={32} />
+                    <CheckCircle color="#22c55e" size={40} />
                   </div>
                   {stats.total > 0 && (
-                    <div className="mt-2 text-sm text-green-700">
+                    <div style={{marginTop: '8px', fontSize: '14px', color: '#166534'}}>
                       {((stats.valid / stats.total) * 100).toFixed(1)}%
                     </div>
                   )}
                 </div>
 
-                <div className="border-2 border-yellow-200 bg-yellow-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
+                <div style={{...styles.statCard, ...styles.riskyCard}}>
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <div>
-                      <div className="text-sm text-yellow-700 font-medium">Risky</div>
-                      <div className="text-2xl font-bold text-yellow-600">{stats.risky}</div>
+                      <div style={{fontSize: '14px', color: '#854d0e', fontWeight: '600'}}>Risky</div>
+                      <div style={{fontSize: '32px', fontWeight: 'bold', color: '#eab308'}}>{stats.risky}</div>
                     </div>
-                    <AlertTriangle className="text-yellow-600" size={32} />
+                    <AlertTriangle color="#eab308" size={40} />
                   </div>
                   {stats.total > 0 && (
-                    <div className="mt-2 text-sm text-yellow-700">
+                    <div style={{marginTop: '8px', fontSize: '14px', color: '#854d0e'}}>
                       {((stats.risky / stats.total) * 100).toFixed(1)}%
                     </div>
                   )}
                 </div>
 
-                <div className="border-2 border-red-200 bg-red-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
+                <div style={{...styles.statCard, ...styles.invalidCard}}>
+                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <div>
-                      <div className="text-sm text-red-700 font-medium">Invalid</div>
-                      <div className="text-2xl font-bold text-red-600">{stats.invalid}</div>
+                      <div style={{fontSize: '14px', color: '#991b1b', fontWeight: '600'}}>Invalid</div>
+                      <div style={{fontSize: '32px', fontWeight: 'bold', color: '#ef4444'}}>{stats.invalid}</div>
                     </div>
-                    <XCircle className="text-red-600" size={32} />
+                    <XCircle color="#ef4444" size={40} />
                   </div>
                   {stats.total > 0 && (
-                    <div className="mt-2 text-sm text-red-700">
+                    <div style={{marginTop: '8px', fontSize: '14px', color: '#991b1b'}}>
                       {((stats.invalid / stats.total) * 100).toFixed(1)}%
                     </div>
                   )}
@@ -351,32 +478,32 @@ const EmailValidator = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg shadow-lg p-6 text-white">
-              <h3 className="text-lg font-semibold mb-3">Validation Checks</h3>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2">
-                  <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
+            <div style={{...styles.card, marginTop: '24px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white'}}>
+              <h3 style={{fontSize: '18px', fontWeight: '600', marginBottom: '16px'}}>Validation Checks</h3>
+              <ul style={{listStyle: 'none', padding: 0, margin: 0, fontSize: '14px', lineHeight: '2'}}>
+                <li style={{display: 'flex', alignItems: 'flex-start', gap: '8px'}}>
+                  <CheckCircle size={16} style={{marginTop: '4px', flexShrink: 0}} />
                   <span>RFC 5322 syntax validation</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
+                <li style={{display: 'flex', alignItems: 'flex-start', gap: '8px'}}>
+                  <CheckCircle size={16} style={{marginTop: '4px', flexShrink: 0}} />
                   <span>DNS/MX record verification</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
+                <li style={{display: 'flex', alignItems: 'flex-start', gap: '8px'}}>
+                  <CheckCircle size={16} style={{marginTop: '4px', flexShrink: 0}} />
                   <span>Disposable email detection</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
+                <li style={{display: 'flex', alignItems: 'flex-start', gap: '8px'}}>
+                  <CheckCircle size={16} style={{marginTop: '4px', flexShrink: 0}} />
                   <span>Role-based email flagging</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
+                <li style={{display: 'flex', alignItems: 'flex-start', gap: '8px'}}>
+                  <CheckCircle size={16} style={{marginTop: '4px', flexShrink: 0}} />
                   <span>Duplicate removal</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
-                  <span>Scoring algorithm</span>
+                <li style={{display: 'flex', alignItems: 'flex-start', gap: '8px'}}>
+                  <CheckCircle size={16} style={{marginTop: '4px', flexShrink: 0}} />
+                  <span>Scoring algorithm (0-100)</span>
                 </li>
               </ul>
             </div>
